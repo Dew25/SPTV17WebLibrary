@@ -2,6 +2,7 @@
 package controller;
 
 import entity.Book;
+import entity.Reader;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "LibraryController", urlPatterns = {
     "/book",//Шаблоны запроса, который отлавливает сервлет
-    
+    "/reader",
 })
 public class LibraryController extends HttpServlet {
 
@@ -32,14 +33,26 @@ public class LibraryController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
-        Book book = new Book(); //Инициация объекта книги
-        book.setId(1L);
-        book.setName("Война и мир");
-        book.setAuthor("Л.Толстой");
-        book.setYear(2010);
-        request.setAttribute("book", book); // Создание переменной book в контексте обработки jsp
-        request.getRequestDispatcher("/index.jsp")
+        String path = request.getServletPath();
+        switch (path) {
+            case "/book":
+                Book book = new Book(); //Инициация объекта книги
+                book.setId(1L);
+                book.setName("Война и мир");
+                book.setAuthor("Л.Толстой");
+                book.setYear(2010);
+                request.setAttribute("book", book); // Создание переменной book в контексте обработки jsp
+                request.getRequestDispatcher("/index.jsp")
                 .forward(request, response); // Формирование ответа браузеру
+                break;
+            case "/reader":
+                Reader reader = new Reader(1L, "Иван", "Иванов", 2003);
+                request.setAttribute("reader", reader);
+                request.getRequestDispatcher("/index.jsp")
+                .forward(request, response);
+                break;
+        }
+        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
