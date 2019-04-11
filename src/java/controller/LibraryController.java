@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author user
  */
 @WebServlet(name = "LibraryController", urlPatterns = {
+
     "/book",//Шаблоны запроса, которые отлавливает сервлет
     "/reader",
     "/showNewBook",
@@ -27,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 public class LibraryController extends HttpServlet {
    List<Book> listBooks = new ArrayList<>();
    List<Reader> listReaders = new ArrayList<>();
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -87,6 +89,7 @@ public class LibraryController extends HttpServlet {
                 request.getRequestDispatcher("/index.jsp")
                     .forward(request, response);
                 break;    
+
         }
         
     }
