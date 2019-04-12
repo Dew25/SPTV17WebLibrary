@@ -6,11 +6,14 @@ import entity.Reader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import session.BookFacade;
+import session.ReaderFacade;
 
 /**
  *
@@ -25,8 +28,10 @@ import javax.servlet.http.HttpServletResponse;
     "/createReader",
 })
 public class LibraryController extends HttpServlet {
-   List<Book> listBooks = new ArrayList<>();
-   List<Reader> listReaders = new ArrayList<>();
+//   List<Book> listBooks = new ArrayList<>();
+//    List<Reader> listReaders = new ArrayList<>();
+    @EJB BookFacade bookFacade;
+    @EJB ReaderFacade readerFacade;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -66,8 +71,10 @@ public class LibraryController extends HttpServlet {
                 String name = request.getParameter("name");
                 String author = request.getParameter("author");
                 String year = request.getParameter("year");
-                book = new Book(1L, name, author, new Integer(year));
-                listBooks.add(book);
+                book = new Book(null, name, author, new Integer(year));
+//                listBooks.add(book);
+                bookFacade.create(book);
+                List<Book> listBooks = bookFacade.findAll();
                 request.setAttribute("listBooks", listBooks); 
                 request.getRequestDispatcher("/index.jsp")
                     .forward(request, response);
@@ -80,8 +87,10 @@ public class LibraryController extends HttpServlet {
                 name = request.getParameter("name");
                 String surname = request.getParameter("surname");
                 year = request.getParameter("year");
-                reader = new Reader(1L, name, surname, new Integer(year));
-                listReaders.add(reader);
+                reader = new Reader(null, name, surname, new Integer(year));
+                readerFacade.create(reader);
+                List<Reader>listReaders = readerFacade.findAll();
+                listBooks = bookFacade.findAll();
                 request.setAttribute("listReaders", listReaders);
                 request.setAttribute("listBooks", listBooks);
                 request.getRequestDispatcher("/index.jsp")
