@@ -4,6 +4,7 @@
     Author     : user
 --%>
 
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -16,6 +17,8 @@
         <h1>Привет ребята!</h1>
         <a href="showNewBook">Новая книга</a><br>
         <a href="showNewReader">Новый читатель</a><br>
+        <a href="showListBooks">Список книг</a><br>
+        <a href="showTakeBookToReader">Выдать книгу читателю</a><br>
         Список книг:<br>
         <c:forEach var="book" items="${listBooks}">
             ${book}<br>
@@ -25,6 +28,6 @@
         <c:forEach var="reader" items="${listReaders}">
             ${reader}<br>
         </c:forEach> 
-
+            
     </body>
 </html>

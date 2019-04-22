@@ -2,33 +2,44 @@
 package controller;
 
 import entity.Book;
+import entity.History;
 import entity.Reader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import session.BookFacade;
+import session.HistoryFacade;
+import session.ReaderFacade;
 
 /**
  *
  * @author user
  */
 @WebServlet(name = "LibraryController", urlPatterns = {
-
     "/book",//Шаблоны запроса, которые отлавливает сервлет
     "/reader",
     "/showNewBook",
     "/createBook",
     "/showNewReader",
     "/createReader",
+    "/showListBooks",
+    "/showTakeBookToReader",
+    "/takeBookToReader",
 })
 public class LibraryController extends HttpServlet {
-   List<Book> listBooks = new ArrayList<>();
-   List<Reader> listReaders = new ArrayList<>();
-
+//   List<Book> listBooks = new ArrayList<>();
+//    List<Reader> listReaders = new ArrayList<>();
+    @EJB BookFacade bookFacade;
+    @EJB ReaderFacade readerFacade;
+    @EJB HistoryFacade historyFacade;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -68,8 +79,10 @@ public class LibraryController extends HttpServlet {
                 String name = request.getParameter("name");
                 String author = request.getParameter("author");
                 String year = request.getParameter("year");
-                book = new Book(1L, name, author, new Integer(year));
-                listBooks.add(book);
+                book = new Book(null, name, author, new Integer(year));
+//                listBooks.add(book);
+                bookFacade.create(book);
+                List<Book> listBooks = bookFacade.findAll();
                 request.setAttribute("listBooks", listBooks); 
                 request.getRequestDispatcher("/index.jsp")
                     .forward(request, response);
@@ -82,14 +95,45 @@ public class LibraryController extends HttpServlet {
                 name = request.getParameter("name");
                 String surname = request.getParameter("surname");
                 year = request.getParameter("year");
-                reader = new Reader(1L, name, surname, new Integer(year));
-                listReaders.add(reader);
+                reader = new Reader(null, name, surname, new Integer(year));
+                readerFacade.create(reader);
+                List<Reader>listReaders = readerFacade.findAll();
+                listBooks = bookFacade.findAll();
                 request.setAttribute("listReaders", listReaders);
                 request.setAttribute("listBooks", listBooks);
                 request.getRequestDispatcher("/index.jsp")
                     .forward(request, response);
-                break;    
-
+                break; 
+            case "/showListBooks":
+                listBooks = bookFacade.findAll();
+                request.setAttribute("listBooks", listBooks);
+                request.getRequestDispatcher("/showListBooks.jsp")
+                        .forward(request, response);
+                break;
+            case "/showTakeBookToReader":
+                listReaders = readerFacade.findAll();
+                listBooks = bookFacade.findAll();
+                request.setAttribute("listReaders", listReaders);
+                request.setAttribute("listBooks", listBooks);
+                request.getRequestDispatcher("/showTakeBookToReader.jsp")
+                        .forward(request, response);
+                break;
+            case "/takeBookToReader":
+                String readerId = request.getParameter("readerId");
+                String bookId = request.getParameter("bookId");
+                reader = readerFacade.find(new Long(readerId));
+                book = bookFacade.find(new Long(bookId));
+                Calendar c = new GregorianCalendar();
+                History history = new History(
+                                        null, book, 
+                                        reader, c.getTime(), null
+                                    );
+                historyFacade.create(history);
+                List<History> listHistories = historyFacade.findTakeBooks();
+                request.setAttribute("listHistories", listHistories);
+                request.getRequestDispatcher("/showListTakeBooks.jsp")
+                        .forward(request, response);
+                break;
         }
         
     }

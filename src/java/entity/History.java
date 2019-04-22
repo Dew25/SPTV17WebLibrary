@@ -2,18 +2,31 @@ package entity;
 
 import java.util.Date;
 import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
 
 /**
  *
  * @author user
  */
+@Entity
 public class History {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Long id;
+    @OneToOne
     private Book book;
+    @OneToOne
     private Reader reader;
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date beginDate;
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date endDate;
-
+    
     public History() {
     }
 
